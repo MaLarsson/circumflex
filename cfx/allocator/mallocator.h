@@ -5,9 +5,7 @@
 
 #include "block.h"
 
-
 namespace cfx {
-
 
 class mallocator {
  public:
@@ -24,8 +22,6 @@ class mallocator {
     }
 };
 
-
 } // cfx
-
 
 #endif // CFX_ALLOCATOR_MALLOCATOR_H_

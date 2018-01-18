@@ -5,9 +5,7 @@
 
 #include "cfx/allocator/mallocator.h"
 
-
 namespace cfx {
-
 
 template <typename T, typename A = cfx::mallocator>
 class vector {
@@ -31,8 +29,6 @@ class vector {
     T* end() { return static_cast<T*>(blk_.end); }
 };
 
-
 } // cfx
-
 
 #endif // CFX_CONTAINER_VECTOR_H_

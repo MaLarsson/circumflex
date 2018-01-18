@@ -3,9 +3,7 @@
 #ifndef CFX_ALLOCATOR_BLOCK_H_
 #define CFX_ALLOCATOR_BLOCK_H_
 
-
 namespace cfx {
-
 
 struct block {
     // Constructors
@@ -28,8 +26,6 @@ struct block {
     void* end;
 };
 
-
 } // cfx
-
 
 #endif // CFX_ALLOCATOR_BLOCK_H_
