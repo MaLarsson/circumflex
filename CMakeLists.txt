@@ -4,6 +4,7 @@ project(circumflex)
 
 # Set constants
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
 # Make executable
 add_executable(tests tests.cc)

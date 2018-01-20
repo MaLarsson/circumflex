@@ -3,6 +3,7 @@
 #ifndef CFX_ALLOCATOR_MALLOCATOR_H_
 #define CFX_ALLOCATOR_MALLOCATOR_H_
 
+#include <cstdlib>
 #include "block.h"
 
 namespace cfx {
@@ -10,8 +11,8 @@ namespace cfx {
 class mallocator {
  public:
     block allocate(size_t size) noexcept {
-	if (auto start = ::malloc(size); start != nullptr)
-	    return { start, static_cast<char*>(start) + size };
+	if (auto start = static_cast<std::byte*>(::malloc(size)); start != nullptr)
+	    return { start, start + size };
 
 	return { nullptr, nullptr };
     }
