@@ -3,6 +3,11 @@
 #ifndef CFX_CONTAINER_VECTOR_H_
 #define CFX_CONTAINER_VECTOR_H_
 
+#include <cstddef>
+#include <iterator>
+#include <utility>
+
+#include "cfx/allocator/block.h"
 #include "cfx/allocator/mallocator.h"
 
 namespace cfx {
@@ -29,15 +34,29 @@ class vector {
 	: vector(allocator_type()) {}
 
     explicit vector(const allocator_type& alloc) noexcept
-	: alloc_(alloc) {}
+	: blk_(cfx::block()), head_(nullptr), alloc_(alloc) {}
+
+    // Modifiers
+    template <typename ...Args>
+    void emplace_back(Args&&... args) {
+	constructor(head_, std::forward<Args>(args)...);
+    }
+
+    void push_back(const_reference value) { emplace_back(value); }
+    void push_back(value_type&& value) { emplace_back(std::move(value)); }
 
  private:
-    T* head_;
-    block blk_;
+    cfx::block blk_;
+    pointer head_;
     allocator_type alloc_;
 
-    T* start() { return static_cast<T*>(blk_.start); }
-    T* end() { return static_cast<T*>(blk_.end); }
+    pointer start() { return static_cast<pointer>(blk_.start); }
+    pointer end() { return static_cast<pointer>(blk_.end); }
+
+    template <typename ...Args>
+    reference construct(pointer ptr, Args&&... args) {
+	::new (static_cast<void*>(ptr)) value_type(std::forward<Args>(args)...);
+    }
 };
 
 } // cfx
