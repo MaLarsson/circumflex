@@ -38,8 +38,8 @@ class vector {
 
     // Modifiers
     template <typename ...Args>
-    void emplace_back(Args&&... args) {
-	constructor(head_, std::forward<Args>(args)...);
+    reference emplace_back(Args&&... args) {
+	return construct(head_++, std::forward<Args>(args)...);
     }
 
     void push_back(const_reference value) { emplace_back(value); }
@@ -56,6 +56,7 @@ class vector {
     template <typename ...Args>
     reference construct(pointer ptr, Args&&... args) {
 	::new (static_cast<void*>(ptr)) value_type(std::forward<Args>(args)...);
+	return *ptr;
     }
 };
 
