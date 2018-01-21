@@ -7,11 +7,11 @@ namespace cfx {
 
 template <typename T>
 struct implements_owns {
-    template <typename U, bool (U::*)() const noexcept> struct check {};
-    template <typename U> static constexpr bool test(check<U, &U::owns>*) { return true; }
-    template <typename U> static constexpr bool test(...) { return false; }
+    template <typename U, bool (U::*)() const noexcept> struct fn_sig {};
+    template <typename U> static constexpr bool check(fn_sig<U, &U::owns>*) { return true; }
+    template <typename U> static constexpr bool check(...) { return false; }
 
-    static constexpr bool value = test<T>(nullptr);
+    static constexpr bool value = check<T>(nullptr);
 };
 
 template <typename T>
