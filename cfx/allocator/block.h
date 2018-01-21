@@ -17,6 +17,9 @@ struct block {
     block(const block& blk) noexcept = default;
     block(block&& blk) noexcept = default;
 
+    // Operators
+    explicit operator bool() const { return start != nullptr && end != nullptr; }
+
     // Methods
     size_t size() const noexcept { return end - start; }
 
