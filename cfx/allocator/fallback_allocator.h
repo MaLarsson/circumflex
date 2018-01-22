@@ -37,6 +37,11 @@ class fallback_allocator {
 	else
 	    fallback::deallocate(blk);
     }
+
+    typename std::enable_if_t<cfx::implements_owns_v<P> && cfx::implements_owns_v<F>, bool>
+    owns(const cfx::block& blk) const noexcept {
+	return primary::owns(blk) || fallback::owns(blk);
+    }
 };
 
 } // cfx
