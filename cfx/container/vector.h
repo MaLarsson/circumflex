@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "cfx/allocator/block.h"
+#include "cfx/allocator/fallback_allocator.h"
 #include "cfx/allocator/mallocator.h"
 
 namespace cfx {
@@ -56,6 +57,7 @@ class vector {
     template <typename ...Args>
     reference construct(pointer ptr, Args&&... args) {
 	::new (static_cast<void*>(ptr)) value_type(std::forward<Args>(args)...);
+
 	return *ptr;
     }
 };
