@@ -9,11 +9,15 @@
 
 #include "cfx/allocator/block.h"
 #include "cfx/allocator/fallback_allocator.h"
+#include "cfx/allocator/stack_allocator.h"
 #include "cfx/allocator/mallocator.h"
 
 namespace cfx {
 
-template <typename T, typename A = cfx::mallocator>
+template <size_t N>
+using locallocator = cfx::fallback_allocator<cfx::stack_allocator<N>, cfx::mallocator>;
+
+template <typename T, size_t N = 10, typename A = locallocator<sizeof(T) * N> >
 class vector {
  public:
     // Aliases
@@ -57,7 +61,6 @@ class vector {
     template <typename ...Args>
     reference construct(pointer ptr, Args&&... args) {
 	::new (static_cast<void*>(ptr)) value_type(std::forward<Args>(args)...);
-
 	return *ptr;
     }
 };

@@ -11,7 +11,7 @@ template <typename T>
 struct implements_owns {
     template <typename U, bool (U::*)(const cfx::block&) const noexcept> struct fn_sig {};
     template <typename U> static constexpr bool check(fn_sig<U, &U::owns>*) { return true; }
-    template <typename U> static constexpr bool check(void*) { return false; }
+    template <typename U> static constexpr bool check(...) { return false; }
 
     static constexpr bool value = check<T>(nullptr);
 };
