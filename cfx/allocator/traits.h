@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef CFX_ALLOCATOR_TRAITS_H_
 #define CFX_ALLOCATOR_TRAITS_H_
 

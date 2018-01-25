@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef CFX_ALLOCATOR_FALLBACK_ALLOCATOR_H_
 #define CFX_ALLOCATOR_FALLBACK_ALLOCATOR_H_
 
@@ -11,32 +9,29 @@
 
 namespace cfx {
 
-template <typename P, typename F>
-class fallback_allocator : private P, private F {
-    using primary = P;
-    using fallback = F;
-
-    static_assert(cfx::implements_owns_v<primary>, "primary allocator does not implement owns");
+template <typename Primary, typename Fallback>
+class fallback_allocator : private Primary, private Fallback {
+    static_assert(cfx::implements_owns_v<Primary>, "primary allocator does not implement owns");
 
  public:
     cfx::block allocate(size_t size) noexcept {
-	if (auto blk = primary::allocate(size))
+	if (auto blk = Primary::allocate(size))
 	    return blk;
 
-	return fallback::allocate(size);
+	return Fallback::allocate(size);
     }
 
     void deallocate(cfx::block& blk) noexcept {
-	if (primary::owns(blk))
-	    primary::deallocate(blk);
+	if (Primary::owns(blk))
+	    Primary::deallocate(blk);
 	else
-	    fallback::deallocate(blk);
+	    Fallback::deallocate(blk);
     }
 
-    template <typename U = primary, typename V = fallback>
+    template <typename U = Primary, typename V = Fallback>
     typename std::enable_if_t<cfx::implements_owns_v<U> && cfx::implements_owns_v<V>, bool>
     owns(const cfx::block& blk) const noexcept {
-	return primary::owns(blk) || fallback::owns(blk);
+	return Primary::owns(blk) || Fallback::owns(blk);
     }
 };
 

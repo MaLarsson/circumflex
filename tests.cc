@@ -1,9 +1,9 @@
 #include <iostream>
-#include <cfx/container/vector.h>
+#include <cfx/container/inlined_vector.h>
 
 int main()
 {
-    cfx::vector<int> v;
+    cfx::inlined_vector<int> v;
 
     return 0;
 }

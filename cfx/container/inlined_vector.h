@@ -1,24 +1,29 @@
-#pragma once
-
-#ifndef CFX_CONTAINER_VECTOR_H_
-#define CFX_CONTAINER_VECTOR_H_
+#ifndef CFX_CONTAINER_INLINED_VECTOR_H_
+#define CFX_CONTAINER_INLINED_VECTOR_H_
 
 #include <cstddef>
 #include <iterator>
 #include <utility>
 
 #include "cfx/allocator/block.h"
+#include "cfx/allocator/typed_allocator.h"
 #include "cfx/allocator/fallback_allocator.h"
 #include "cfx/allocator/stack_allocator.h"
 #include "cfx/allocator/mallocator.h"
 
 namespace cfx {
 
-template <size_t N>
-using locallocator = cfx::fallback_allocator<cfx::stack_allocator<N>, cfx::mallocator>;
+template <typename T, size_t N>
+using locallocator = cfx::typed_allocator<
+    T,
+    cfx::fallback_allocator<
+	cfx::stack_allocator<sizeof(T) * N, alignof(T)>,
+	cfx::mallocator
+    >
+>;
 
-template <typename T, size_t N = 10, typename A = locallocator<sizeof(T) * N> >
-class vector {
+template <typename T, size_t N = 10, typename A = locallocator<T, N> >
+class inlined_vector {
  public:
     // Aliases
     using value_type = T;
@@ -35,10 +40,10 @@ class vector {
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // Constructors
-    vector() noexcept(noexcept(allocator_type()))
-	: vector(allocator_type()) {}
+    inlined_vector() noexcept(noexcept(allocator_type()))
+	: inlined_vector(allocator_type()) {}
 
-    explicit vector(const allocator_type& alloc) noexcept
+    explicit inlined_vector(const allocator_type& alloc) noexcept
 	: blk_(cfx::block()), head_(nullptr), alloc_(alloc) {}
 
     // Modifiers
@@ -67,4 +72,4 @@ class vector {
 
 } // cfx
 
-#endif // CFX_CONTAINER_VECTOR_H_
+#endif // CFX_CONTAINER_INLINED_VECTOR_H_
