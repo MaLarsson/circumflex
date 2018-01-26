@@ -14,8 +14,7 @@
 namespace cfx {
 
 template <typename T, size_t N>
-using locallocator = cfx::typed_allocator<
-    T,
+using locallocator = cfx::typed_allocator<T,
     cfx::fallback_allocator<
 	cfx::stack_allocator<sizeof(T) * N, alignof(T)>,
 	cfx::mallocator
@@ -40,11 +39,12 @@ class inlined_vector {
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // Constructors
-    inlined_vector() noexcept(noexcept(allocator_type()))
-	: inlined_vector(allocator_type()) {}
+    explicit inlined_vector(const allocator_type& alloc = allocator_type()) noexcept
+	: alloc_(alloc), blk_(alloc_.allocate(N)), head_(start()) {}
 
-    explicit inlined_vector(const allocator_type& alloc) noexcept
-	: blk_(cfx::block()), head_(nullptr), alloc_(alloc) {}
+    // Iterators
+    iterator begin() noexcept { return start(); }
+    iterator end() noexcept { return head_; }
 
     // Modifiers
     template <typename ...Args>
@@ -56,12 +56,14 @@ class inlined_vector {
     void push_back(value_type&& value) { emplace_back(std::move(value)); }
 
  private:
+    static_assert(N > 0, "inlined vector with non positive size");
+
+    allocator_type alloc_;
     cfx::block blk_;
     pointer head_;
-    allocator_type alloc_;
 
     pointer start() { return static_cast<pointer>(blk_.start); }
-    pointer end() { return static_cast<pointer>(blk_.end); }
+    pointer end_cap() { return static_cast<pointer>(blk_.end); }
 
     template <typename ...Args>
     reference construct(pointer ptr, Args&&... args) {

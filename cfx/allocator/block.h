@@ -9,17 +9,11 @@ struct block {
     // Constructors
     block() noexcept : start(nullptr), end(nullptr) {}
 
-    block(std::byte* start, std::byte* end) noexcept
+    block(void* start, void* end) noexcept
 	: start(start), end(end) {}
-
-    block(const block& blk) noexcept = default;
-    block(block&& blk) noexcept = default;
 
     // Operators
     explicit operator bool() const { return start != nullptr && end != nullptr; }
-
-    // Methods
-    size_t size() const noexcept { return end - start; }
 
     void reset() noexcept {
 	start = nullptr;
@@ -27,8 +21,8 @@ struct block {
     }
 
     // Fields
-    std::byte* start;
-    std::byte* end;
+    void* start;
+    void* end;
 };
 
 } // cfx

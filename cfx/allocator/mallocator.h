@@ -11,8 +11,8 @@ namespace cfx {
 class mallocator {
  public:
     cfx::block allocate(size_t size) noexcept {
-	if (auto start = static_cast<std::byte*>(::malloc(size)); start != nullptr)
-	    return { start, start + size };
+	if (auto start = ::malloc(size); start != nullptr)
+	    return { start, static_cast<std::byte*>(start) + size };
 
 	return { nullptr, nullptr };
     }

@@ -14,12 +14,18 @@ class stack_allocator {
     stack_allocator() noexcept : head_(stack_) {}
 
     cfx::block allocate(size_t size) noexcept {
-	// TODO ...
+	auto aligned_size = round_to_alignment(size);
 
-	return { nullptr, nullptr };
+	if (aligned_size > remaining_size())
+	    return { nullptr, nullptr };
+
+	auto start = head_;
+	head_ = head_ + aligned_size;
+
+	return { start, head_ };
     }
 
-    void deallocate(cfx::block& blk) noexcept {
+    void deallocate(cfx::block& /*blk*/) noexcept {
 	// TODO ...
     }
 
@@ -31,8 +37,14 @@ class stack_allocator {
     static_assert(Size > 0, "stack allocator with non positive size");
     static_assert(Alignment > 0, "stack allocator with non positive alignment");
 
-    alignas(Alignment) std::byte stack_[Size];
+    std::byte stack_[Size];
     std::byte* head_;
+
+    size_t remaining_size() const noexcept { return stack_ + Size - head_; }
+
+    constexpr size_t round_to_alignment(size_t size) noexcept {
+        return size + ((size % Alignment == 0) ? 0 : (Alignment - size % Alignment));
+    }
 };
 
 } // cfx
