@@ -1,8 +1,6 @@
 #ifndef CFX_ALLOCATOR_BLOCK_H_
 #define CFX_ALLOCATOR_BLOCK_H_
 
-#include <cstddef>
-
 namespace cfx {
 
 struct block {
