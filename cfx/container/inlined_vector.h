@@ -55,6 +55,11 @@ class inlined_vector {
     iterator begin() noexcept { return start(); }
     iterator end() noexcept { return head_; }
 
+    // Capacity
+    bool empty() const noexcept { return size() == 0; }
+    size_type size() const noexcept { return head_ - start(); }
+    size_type capacity() const noexcept { return end_cap() - start(); }
+
     // Modifiers
     template <typename ...Args>
     reference emplace_back(Args&&... args) {
@@ -71,8 +76,8 @@ class inlined_vector {
     cfx::block blk_;
     pointer head_;
 
-    pointer start() { return static_cast<pointer>(blk_.start); }
-    pointer end_cap() { return static_cast<pointer>(blk_.end); }
+    pointer start() const noexcept { return static_cast<pointer>(blk_.start); }
+    pointer end_cap() const noexcept { return static_cast<pointer>(blk_.end); }
 
     template <typename ...Args>
     reference construct(pointer ptr, Args&&... args) {
