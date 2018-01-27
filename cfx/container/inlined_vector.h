@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <iterator>
 #include <utility>
+#include <initializer_list>
+#include <algorithm>
 
 #include "cfx/allocator/block.h"
 #include "cfx/allocator/typed_allocator.h"
@@ -41,6 +43,13 @@ class inlined_vector {
     // Constructors
     explicit inlined_vector(const allocator_type& alloc = allocator_type()) noexcept
 	: alloc_(alloc), blk_(alloc_.allocate(N)), head_(start()) {}
+
+    inlined_vector(std::initializer_list<value_type> list,
+		   const allocator_type& alloc = allocator_type())
+	: alloc_(alloc), blk_(alloc_.allocate(std::max(list.size(), N))), head_(start()) {
+	for (auto& elem : list)
+	    construct(head_++, elem);
+    }
 
     // Iterators
     iterator begin() noexcept { return start(); }
