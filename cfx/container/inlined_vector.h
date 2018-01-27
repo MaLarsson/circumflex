@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iterator>
 #include <utility>
+#include <stdexcept>
 #include <initializer_list>
 #include <algorithm>
 
@@ -51,9 +52,49 @@ class inlined_vector {
 	    construct(head_++, elem);
     }
 
+    // Element access
+    reference at(size_type pos) {
+	if (!(pos < size()))
+	    throw std::out_of_range("cfx::inlined_vector::at() failed bounds check");
+
+	return start()[pos];
+    }
+
+    const_reference at(size_type pos) const {
+	if (!(pos < size()))
+	    throw std::out_of_range("cfx::inlined_vector::at() failed bounds check");
+
+	return start()[pos];
+    }
+
+    reference operator[](size_type pos) { return start()[pos]; }
+    const_reference operator[](size_type pos) const { return start()[pos]; }
+
+    reference front() { return at(0); }
+    const_reference front() const { return at(0); }
+
+    reference back() { return at(size() - 1); }
+    const_reference back() const { return at(size() - 1); }
+
+    pointer data() noexcept { return start(); }
+    const_pointer data() const noexcept { return start(); }
+
     // Iterators
     iterator begin() noexcept { return start(); }
+    const_iterator begin() const noexcept { return start(); }
+    const_iterator cbegin() const noexcept { return begin(); }
+
     iterator end() noexcept { return head_; }
+    const_iterator end() const noexcept { return head_; }
+    const_iterator cend() const noexcept { return end(); }
+
+    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+    const_reverse_iterator rbegin() const noexcept { return  const_reverse_iterator(end()); }
+    const_reverse_iterator crbegin() const noexcept { return rbegin(); }
+
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+    const_reverse_iterator rend() const noexcept { return  const_reverse_iterator(begin()); }
+    const_reverse_iterator crend() const noexcept { return rend(); }
 
     // Capacity
     bool empty() const noexcept { return size() == 0; }
